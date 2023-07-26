@@ -1,0 +1,29 @@
+# Izveidojam produkta bāzi - "node" tagu ar vēlamo versiju
+FROM node:14 as build-stage
+
+# Izveidojam direktoriju "app" un nomainam to par pašreizējo darba direktoriju
+WORKDIR /app
+
+# Kopējam projektu failus uz konteineri
+COPY package*.json ./
+
+# Instalējam atkarības
+RUN npm install
+
+# Kopējam visus projektu failus uz konteineri
+COPY . .
+
+# Veicam aplikācijas būvēšanu
+RUN npm run build
+
+# ------------------
+# Otrais posms, lai samazinātu gala izmēru
+FROM nginx:1.21
+
+# Kopējam veidotās aplikācijas failus no pirmā posma konteineri uz nginx konteineri
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+# Noklusējuma Nginx konfigurācija - jūs varat mainīt atkarībā no jūsu vajadzībām
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Nginx serveris tiek palaists automātiski, tāpēc nav nepieciešams to īpaši norādīt

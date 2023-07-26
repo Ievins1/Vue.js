@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  vue_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: ./path/to/your/api # Norāda, kur atrodas Python API kods
+      dockerfile: Dockerfile # Norāda, ka izmantojam iepriekš izveidoto Dockerfile
+    ports:
+      - "5000:5000" # Definē, kādi ports jāpieliek konteineram
